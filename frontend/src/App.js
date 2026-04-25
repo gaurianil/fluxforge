@@ -9,10 +9,7 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   const runTest = async () => {
-    if (!url) {
-      alert("Enter a valid API URL");
-      return;
-    }
+    if (!url) return alert("Enter API URL");
 
     try {
       setLoading(true);
@@ -26,29 +23,29 @@ function App() {
 
       setResult(res.data);
     } catch (err) {
-      alert("Backend error. Check server.");
+      alert("Backend not reachable");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.app}>
-      
+    <div style={styles.page}>
+
       {/* HEADER */}
       <div style={styles.header}>
         <h1 style={styles.title}>FluxForge</h1>
         <p style={styles.subtitle}>
-          Distributed API Load Testing & Observability Platform
+          API Load Testing & Observability Engine
         </p>
       </div>
 
-      {/* DASHBOARD GRID */}
-      <div style={styles.grid}>
+      {/* MAIN */}
+      <div style={styles.container}>
 
-        {/* INPUT PANEL */}
+        {/* INPUT */}
         <div style={styles.card}>
-          <h2 style={styles.cardTitle}>Target API</h2>
+          <label style={styles.label}>API Endpoint</label>
 
           <input
             style={styles.input}
@@ -62,149 +59,167 @@ function App() {
             onClick={runTest}
             disabled={loading}
           >
-            {loading ? "Running Stress Test..." : "Start Test"}
+            {loading ? "Running..." : "Run Test"}
           </button>
         </div>
 
         {/* CONTROLS */}
-        <div style={styles.card}>
-          <h2 style={styles.cardTitle}>Load Configuration</h2>
+        <div style={styles.cardRow}>
 
-          <label style={styles.label}>
-            Requests: <span style={styles.highlight}>{requests}</span>
-          </label>
-          <input
-            style={styles.slider}
-            type="range"
-            min="1"
-            max="500"
-            value={requests}
-            onChange={(e) => setRequests(Number(e.target.value))}
-          />
+          <div style={styles.cardSmall}>
+            <p style={styles.label}>
+              Requests: <span style={styles.accent}>{requests}</span>
+            </p>
+            <input
+              type="range"
+              min="1"
+              max="500"
+              value={requests}
+              onChange={(e) => setRequests(Number(e.target.value))}
+              style={styles.slider}
+            />
+          </div>
 
-          <label style={styles.label}>
-            Concurrency: <span style={styles.highlight}>{concurrency}</span>
-          </label>
-          <input
-            style={styles.slider}
-            type="range"
-            min="1"
-            max="50"
-            value={concurrency}
-            onChange={(e) => setConcurrency(Number(e.target.value))}
-          />
+          <div style={styles.cardSmall}>
+            <p style={styles.label}>
+              Concurrency: <span style={styles.accent}>{concurrency}</span>
+            </p>
+            <input
+              type="range"
+              min="1"
+              max="50"
+              value={concurrency}
+              onChange={(e) => setConcurrency(Number(e.target.value))}
+              style={styles.slider}
+            />
+          </div>
+
         </div>
 
-      </div>
+        {/* RESULTS */}
+        {result && (
+          <div style={styles.results}>
 
-      {/* RESULTS */}
-      {result && (
-        <div style={styles.resultsSection}>
+            <div style={styles.grid}>
 
-          <h2 style={styles.sectionTitle}>Performance Metrics</h2>
+              <div style={styles.metric}>
+                <p style={styles.value}>{result.total}</p>
+                <p style={styles.text}>Total</p>
+              </div>
 
-          <div style={styles.metricsGrid}>
+              <div style={styles.metric}>
+                <p style={{ ...styles.value, color: "#22c55e" }}>
+                  {result.success}
+                </p>
+                <p style={styles.text}>Success</p>
+              </div>
 
-            <div style={styles.metricCard}>
-              <p style={styles.metricValue}>{result.total}</p>
-              <p style={styles.metricLabel}>Total Requests</p>
-            </div>
+              <div style={styles.metric}>
+                <p style={{ ...styles.value, color: "#ef4444" }}>
+                  {result.fail}
+                </p>
+                <p style={styles.text}>Failed</p>
+              </div>
 
-            <div style={{ ...styles.metricCard, borderColor: "#00ff88" }}>
-              <p style={{ ...styles.metricValue, color: "#00ff88" }}>
-                {result.success}
-              </p>
-              <p style={styles.metricLabel}>Successful</p>
-            </div>
+              <div style={styles.metric}>
+                <p style={{ ...styles.value, color: "#38bdf8" }}>
+                  {Math.round(result.avgResponseTime)} ms
+                </p>
+                <p style={styles.text}>Latency</p>
+              </div>
 
-            <div style={{ ...styles.metricCard, borderColor: "#ff4d4d" }}>
-              <p style={{ ...styles.metricValue, color: "#ff4d4d" }}>
-                {result.fail}
-              </p>
-              <p style={styles.metricLabel}>Failed</p>
-            </div>
-
-            <div style={{ ...styles.metricCard, borderColor: "#00d4ff" }}>
-              <p style={{ ...styles.metricValue, color: "#00d4ff" }}>
-                {Math.round(result.avgResponseTime)} ms
-              </p>
-              <p style={styles.metricLabel}>Avg Response</p>
             </div>
 
           </div>
-        </div>
-      )}
+        )}
 
+      </div>
     </div>
   );
 }
 
-/* ===== STYLES ===== */
+/* ===== STYLES (BLACK + GREY PREMIUM) ===== */
 const styles = {
-  app: {
+  page: {
     minHeight: "100vh",
-    background: "#0b0f14",
-    color: "white",
-    fontFamily: "Arial",
-    padding: "30px"
+    background: "#0a0a0a",
+    color: "#e5e5e5",
+    fontFamily: "system-ui, Arial",
+    padding: "40px"
   },
 
   header: {
     textAlign: "center",
-    marginBottom: "30px"
+    marginBottom: "40px"
   },
 
   title: {
-    fontSize: "42px",
+    fontSize: "46px",
     margin: 0,
-    color: "#00d4ff",
+    color: "#ffffff",
     letterSpacing: "1px"
   },
 
   subtitle: {
-    color: "#8892a6",
-    marginTop: "8px"
+    marginTop: "8px",
+    color: "#888"
   },
 
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "20px",
-    marginBottom: "20px"
+  container: {
+    maxWidth: "900px",
+    margin: "auto"
   },
 
   card: {
-    background: "#111826",
+    background: "#111111",
     padding: "20px",
     borderRadius: "14px",
-    border: "1px solid #1f2a3a",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.3)"
+    border: "1px solid #222",
+    marginBottom: "20px"
   },
 
-  cardTitle: {
-    marginBottom: "15px",
-    color: "#cbd5e1",
-    fontSize: "16px"
+  cardRow: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "15px",
+    marginBottom: "20px"
+  },
+
+  cardSmall: {
+    background: "#111111",
+    padding: "20px",
+    borderRadius: "14px",
+    border: "1px solid #222"
+  },
+
+  label: {
+    fontSize: "13px",
+    color: "#aaa",
+    marginBottom: "10px"
+  },
+
+  accent: {
+    color: "#ffffff"
   },
 
   input: {
     width: "100%",
     padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #2a3a50",
-    background: "#0b1220",
+    borderRadius: "10px",
+    border: "1px solid #2a2a2a",
+    background: "#0b0b0b",
     color: "white",
+    outline: "none",
     marginBottom: "15px"
   },
 
   button: {
     width: "100%",
     padding: "12px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#00d4ff",
-    color: "#000",
-    fontWeight: "bold",
+    borderRadius: "10px",
+    border: "1px solid #333",
+    background: "#1a1a1a",
+    color: "white",
     cursor: "pointer",
     transition: "0.2s"
   },
@@ -212,63 +227,45 @@ const styles = {
   buttonDisabled: {
     width: "100%",
     padding: "12px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#334155",
-    color: "#94a3b8",
+    borderRadius: "10px",
+    border: "1px solid #333",
+    background: "#111",
+    color: "#555",
     cursor: "not-allowed"
   },
 
-  label: {
-    display: "block",
-    marginTop: "10px",
-    color: "#94a3b8",
-    fontSize: "14px"
-  },
-
-  highlight: {
-    color: "#00d4ff",
-    fontWeight: "bold"
-  },
-
   slider: {
-    width: "100%",
-    marginTop: "8px"
+    width: "100%"
   },
 
-  resultsSection: {
+  results: {
     marginTop: "30px"
   },
 
-  sectionTitle: {
-    marginBottom: "15px",
-    color: "#cbd5e1"
-  },
-
-  metricsGrid: {
+  grid: {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",
     gap: "15px"
   },
 
-  metricCard: {
-    background: "#111826",
+  metric: {
+    background: "#111",
+    border: "1px solid #222",
     padding: "20px",
     borderRadius: "12px",
-    border: "1px solid #1f2a3a",
     textAlign: "center"
   },
 
-  metricValue: {
-    fontSize: "24px",
+  value: {
+    fontSize: "26px",
     margin: 0,
-    fontWeight: "bold"
+    color: "#ffffff"
   },
 
-  metricLabel: {
-    marginTop: "5px",
+  text: {
+    marginTop: "6px",
     fontSize: "12px",
-    color: "#94a3b8"
+    color: "#888"
   }
 };
 
