@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluxforge-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fluxforge-backend
+  template:
+    metadata:
+      labels:
+        app: fluxforge-backend
+    spec:
+      containers:
+      - name: backend
+        image: fluxforge-backend
+        ports:
+        - containerPort: 5000
