@@ -15,7 +15,7 @@ function App() {
       setLoading(true);
       setResult(null);
 
-      const res = await axios.post("http://localhost:5000/test", {
+      const res = await axios.post("http://localhost:8000/test", {
         url,
         requests,
         concurrency
